@@ -49,6 +49,10 @@
     #fake-button:hover {
       background-color: #d62828;
     }
+
+    #hotmart-real {
+      margin-top: 40px;
+    }
   </style>
 </head>
 <body>
@@ -56,16 +60,20 @@
     <h1>Teste Funil</h1>
     <p>Esta é uma página básica de teste para o funil.</p>
 
+    <!-- Botão fake por cima do real invisível -->
     <div id="button-wrapper" style="position: relative; height: 60px;">
       <div id="hotmart-sales-funnel"></div>
-
       <button id="fake-button">Aceitar Oferta</button>
     </div>
+
+    <!-- Segundo botão Hotmart visível para testes -->
+    <div id="hotmart-real"></div>
 
     <!-- Script Hotmart -->
     <script src="https://checkout.hotmart.com/lib/hotmart-checkout-elements.js"></script>
     <script>
       const initHotmartButton = () => {
+        // Botão invisível (com fake por cima)
         checkoutElements.init('salesFunnel').mount('#hotmart-sales-funnel');
 
         const observer = new MutationObserver(() => {
@@ -86,6 +94,9 @@
           childList: true,
           subtree: true
         });
+
+        // Botão visível de teste
+        checkoutElements.init('salesFunnel').mount('#hotmart-real');
       };
 
       window.addEventListener('load', initHotmartButton);
