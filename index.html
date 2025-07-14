@@ -38,24 +38,22 @@
 
     #botao-fake {
       position: absolute;
-      top: 151px;
-      left: 50.4%;
+      top: 151px; /* <- POSIÇÃO VERTICAL AJUSTADA AO BOTÃO "YES" */
+      left: 50%;
       transform: translateX(-50%);
-      width: 240px;
-      height: 45px;
+      width: 250px; /* <- LARGURA IGUAL AO BOTÃO REAL */
+      height: 48px;
       background-color: #e63946;
       color: #fff;
       font-size: 1.1em;
       font-weight: bold;
-      border: none;
       border-radius: 6px;
-      cursor: pointer;
       z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none; /* <- SEGREDO: permite clique passar para o botão real */
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    }
-
-    #botao-fake:hover {
-      background-color: #d62828;
     }
 
     #debug-toggle {
@@ -84,8 +82,8 @@
   <h1>Teste Máscara no Botão "Yes"</h1>
 
   <div class="hotmart-frame">
-    <!-- Botão fake mascarado -->
-    <button id="botao-fake">Aceitar Oferta</button>
+    <!-- Botão fake apenas visual (o clique passa por ele) -->
+    <div id="botao-fake">Aceitar Oferta</div>
 
     <!-- Iframe da Hotmart -->
     <div id="hotmart-sales-funnel"></div>
