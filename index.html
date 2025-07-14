@@ -3,104 +3,143 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Teste Funil</title>
+  <title>Funil com Máscara</title>
   <style>
     body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
       margin: 0;
       font-family: Arial, sans-serif;
-      text-align: center;
       background: #f4f4f4;
     }
 
-    .container {
+    h1 {
+      text-align: center;
+      padding: 30px 0 10px 0;
+    }
+
+    .hotmart-frame {
       position: relative;
-      max-width: 400px;
       width: 100%;
+      max-width: 600px;
+      height: 700px;
+      margin: 0 auto;
+      overflow: visible;
+      background-color: #fff;
+      border-radius: 10px;
     }
 
     #hotmart-sales-funnel {
-      position: relative;
-      z-index: 1;
-      opacity: 0;
-      pointer-events: auto;
-    }
-
-    #fake-button {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: #e63946;
-      color: #fff;
-      border: none;
-      font-size: 1.2em;
-      padding: 15px 20px;
-      border-radius: 5px;
-      cursor: pointer;
-      z-index: 2;
-      transition: background-color 0.3s;
+      z-index: 1;
     }
 
-    #fake-button:hover {
+    #botao-fake {
+      position: absolute;
+      top: 390px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 220px;
+      height: 48px;
+      background-color: #e63946;
+      color: #fff;
+      font-size: 1.1em;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      z-index: 2;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    #botao-fake:hover {
       background-color: #d62828;
     }
 
-    #hotmart-real {
-      margin-top: 40px;
+    #debug-toggle {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      background-color: #333;
+      color: #fff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+      z-index: 99;
+    }
+
+    #debug-toggle:hover {
+      background-color: #555;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Teste Funil</h1>
-    <p>Esta é uma página básica de teste para o funil.</p>
 
-    <!-- Botão fake por cima do real invisível -->
-    <div id="button-wrapper" style="position: relative; height: 60px;">
-      <div id="hotmart-sales-funnel"></div>
-      <button id="fake-button">Aceitar Oferta</button>
-    </div>
+  <button id="debug-toggle">Ativar Debug</button>
 
-    <!-- Segundo botão Hotmart visível para testes -->
-    <div id="hotmart-real"></div>
+  <h1>Teste Máscara no Botão "Yes"</h1>
 
-    <!-- Script Hotmart -->
-    <script src="https://checkout.hotmart.com/lib/hotmart-checkout-elements.js"></script>
-    <script>
-      const initHotmartButton = () => {
-        // Botão invisível (com fake por cima)
-        checkoutElements.init('salesFunnel').mount('#hotmart-sales-funnel');
+  <div class="hotmart-frame">
+    <!-- Botão fake mascarado -->
+    <button id="botao-fake">Aceitar Oferta</button>
 
-        const observer = new MutationObserver(() => {
-          const iframe = document.querySelector('#hotmart-sales-funnel iframe');
-          if (iframe) {
-            iframe.style.opacity = '0';
-            iframe.style.pointerEvents = 'auto';
-            iframe.style.position = 'absolute';
-            iframe.style.top = '0';
-            iframe.style.left = '0';
-            iframe.style.width = '100%';
-            iframe.style.height = '100%';
-            observer.disconnect();
-          }
-        });
-
-        observer.observe(document.getElementById('hotmart-sales-funnel'), {
-          childList: true,
-          subtree: true
-        });
-
-        // Botão visível de teste
-        checkoutElements.init('salesFunnel').mount('#hotmart-real');
-      };
-
-      window.addEventListener('load', initHotmartButton);
-    </script>
+    <!-- Iframe da Hotmart -->
+    <div id="hotmart-sales-funnel"></div>
   </div>
+
+  <script src="https://checkout.hotmart.com/lib/hotmart-checkout-elements.js"></script>
+  <script>
+    let debugAtivo = false;
+
+    const aplicarModo = (iframe) => {
+      if (!iframe) return;
+
+      if (debugAtivo) {
+        iframe.style.opacity = '1';
+        iframe.style.pointerEvents = 'auto';
+        iframe.style.border = '2px dashed red';
+      } else {
+        iframe.style.opacity = '0';
+        iframe.style.pointerEvents = 'auto';
+        iframe.style.border = 'none';
+      }
+
+      iframe.style.width = '100%';
+      iframe.style.height = '100%';
+      iframe.style.position = 'absolute';
+      iframe.style.top = '0';
+      iframe.style.left = '0';
+    };
+
+    window.addEventListener('load', () => {
+      checkoutElements.init('salesFunnel').mount('#hotmart-sales-funnel');
+
+      const observer = new MutationObserver(() => {
+        const iframe = document.querySelector('#hotmart-sales-funnel iframe');
+        if (iframe) {
+          aplicarModo(iframe);
+          observer.disconnect();
+        }
+      });
+
+      observer.observe(document.getElementById('hotmart-sales-funnel'), {
+        childList: true,
+        subtree: true
+      });
+
+      document.getElementById('debug-toggle').addEventListener('click', () => {
+        debugAtivo = !debugAtivo;
+
+        const iframe = document.querySelector('#hotmart-sales-funnel iframe');
+        aplicarModo(iframe);
+
+        document.getElementById('debug-toggle').innerText = debugAtivo ? 'Desativar Debug' : 'Ativar Debug';
+      });
+    });
+  </script>
 </body>
 </html>
